@@ -41,7 +41,9 @@ public class CSVToJsonProcessor implements Processor{
 	
 	private Boolean fieldNames;
 	
-	private CsvSchema schema; 
+	private CsvSchema schema;
+	
+	private Integer linesPerJsonOutput;
 	
 	public CSVToJsonProcessor(Boolean header, String fieldNames) throws ConfigurationException{
 		if(!header && fieldNames!=null){
@@ -79,28 +81,46 @@ public class CSVToJsonProcessor implements Processor{
 	}
 	
 	public void process(Exchange arg0) throws Exception {
+		//http://camel.apache.org/how-do-i-write-a-custom-processor-which-sends-multiple-messages.html
 		InputStream stream = arg0.getIn().getBody(InputStream.class);
 		List<Map<?, ?>> objects = readObjectsFromCsv(stream);
-	
-		//Inefficient write whole files 
-		//TODO: Make this optional
-		/*for(Map<?,?> map : objects){
-			final String json = writeAsJson(map);
-			producer.send(new Processor(){
-				public void process(Exchange outExchange){
-					outExchange.getIn().setBody(json);
+		
+		if(linesPerJsonOutput!=null) {
+			/*
+			 * Write out N lines per Exchange
+			 */
+			List<Map<?, ?>> jsonList = new ArrayList<>();
+			int i=0;
+			for(Map<?, ?> map : objects) {
+				jsonList.add(map);
+				if(i%linesPerJsonOutput==0) {
+					//Output exchange limit was hit
+					this.outputExchange(jsonList);
+					
+					//Reinitialize list
+					jsonList = new ArrayList<>();
 				}
-			});			
-		}*/
-		final String json = writeAsJson(objects);
+			}
+			if(!jsonList.isEmpty()) {
+				//Output any left over files
+				this.outputExchange(jsonList);
+			}
+		}else {
+			//Output the full file as a JSON object
+			this.outputExchange(objects);
+		}
+		
+		//TODO:If you don't close the stream this processor will continue to try and process the exchange...
+		stream.close();
+	}
+	
+	private void outputExchange(List<Map<?,?>> map) throws IOException {
+		final String json = writeAsJson(map);
 		producer.send(new Processor(){
 			public void process(Exchange outExchange){
 				outExchange.getIn().setBody(json);
 			}
-		});	
-		
-		//TODO:If you don't close the stream this processor will continue to try and process the exchange...
-		stream.close();
+		});
 	}
 	
     public List<Map<?, ?>> readObjectsFromCsv(InputStream file) throws IOException {
@@ -143,6 +163,11 @@ public class CSVToJsonProcessor implements Processor{
     
     public String writeAsJson(List<Map<?, ?>> data) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        
+        if(data.size()==1){
+        	//Output non list if only 1
+            return mapper.writeValueAsString(data.get(0));
+        }
         return mapper.writeValueAsString(data);
     }
     
@@ -189,6 +214,14 @@ public class CSVToJsonProcessor implements Processor{
 
 	public void setFieldNames(Boolean fieldNames) {
 		this.fieldNames = fieldNames;
+	}
+
+	public Integer getLinesPerJsonOutput() {
+		return linesPerJsonOutput;
+	}
+
+	public void setLinesPerJsonOutput(Integer linesPerJsonOutput) {
+		this.linesPerJsonOutput = linesPerJsonOutput;
 	}
 
 	
