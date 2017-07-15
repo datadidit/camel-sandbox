@@ -25,7 +25,6 @@ public class GoogleMapsServiceIT {
 
 	@Test
 	public void test() {
-
 		GeocodingResult[] results;
 		try {
 			results = GeocodingApi.geocode(context, "1600 Amphitheatre Parkway Mountain View, CA 94043").await();
@@ -38,6 +37,5 @@ public class GoogleMapsServiceIT {
 		} catch (ApiException | InterruptedException | IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 }

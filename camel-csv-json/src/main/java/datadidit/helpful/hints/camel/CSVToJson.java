@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.naming.ConfigurationException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -41,7 +43,7 @@ public class CSVToJson implements Processor{
 	
 	private CsvSchema schema; 
 	
-	public CSVToJson(Boolean header, String fieldNames) throws Exception{
+	public CSVToJson(Boolean header, String fieldNames) throws ConfigurationException{
 		if(!header && fieldNames!=null){
 			Builder build = CsvSchema.builder();
 			for(String field : fieldNames.split(",")){
@@ -51,7 +53,7 @@ public class CSVToJson implements Processor{
 		}else if(header && fieldNames!=null && !fieldNames.equals("")){
 			schema = this.buildCsvSchema(fieldNames, header);
 		}else if(!header && fieldNames==null){
-			throw new Exception("File must either contain headers or you must provide them..");
+			throw new ConfigurationException("File must either contain headers or you must provide them..");
 		}else{
     		schema = CsvSchema.emptySchema().withHeader();
 		}
@@ -81,6 +83,7 @@ public class CSVToJson implements Processor{
 		List<Map<?, ?>> objects = readObjectsFromCsv(stream);
 	
 		//Inefficient write whole files 
+		//TODO: Make this optional
 		/*for(Map<?,?> map : objects){
 			final String json = writeAsJson(map);
 			producer.send(new Processor(){
