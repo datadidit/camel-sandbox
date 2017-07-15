@@ -1,0 +1,3 @@
+= Camel Sandbox
+
+Repository for any Apache Camel work flows I'm working on. 
