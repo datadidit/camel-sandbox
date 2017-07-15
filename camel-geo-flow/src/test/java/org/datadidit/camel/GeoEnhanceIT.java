@@ -19,7 +19,7 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
 
-import datadidit.helpful.hints.camel.CSVToJson;
+import datadidit.helpful.hints.camel.CSVToJsonProcessor;
 
 public class GeoEnhanceIT {
 	private static GeoApiContext context;
@@ -41,7 +41,7 @@ public class GeoEnhanceIT {
 	@Test
 	public void test() {
 		try {
-			CSVToJson processor = new CSVToJson(true, null);
+			CSVToJsonProcessor processor = new CSVToJsonProcessor(true, null);
 			ObjectMapper mapper = new ObjectMapper();
 
 			List<Map<?,?>> json = processor.readObjectsFromCsv(new FileInputStream(file)); 
@@ -49,7 +49,6 @@ public class GeoEnhanceIT {
 			for(Map<?, ?> entry : json) {
 				this.addGeo((Map<String, Object>) entry, "Birthplace,State,Country", "geometry");
 				System.out.println(mapper.writeValueAsString(entry));
-				//break;
 			}
 		} catch (ConfigurationException | IOException e) {
 			// TODO Auto-generated catch block

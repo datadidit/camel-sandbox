@@ -32,8 +32,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder;
  * http://camel.apache.org/how-do-i-write-a-custom-processor-which-sends-multiple-messages.html
  * http://stackoverflow.com/questions/19766266/convert-csv-file-directly-to-json-file-using-jackson-library
  */
-public class CSVToJson implements Processor{
-	private Logger logger = Logger.getLogger(CSVToJson.class.getName());
+public class CSVToJsonProcessor implements Processor{
+	private Logger logger = Logger.getLogger(CSVToJsonProcessor.class.getName());
 	
 	ProducerTemplate producer; 
 	
@@ -43,7 +43,7 @@ public class CSVToJson implements Processor{
 	
 	private CsvSchema schema; 
 	
-	public CSVToJson(Boolean header, String fieldNames) throws ConfigurationException{
+	public CSVToJsonProcessor(Boolean header, String fieldNames) throws ConfigurationException{
 		if(!header && fieldNames!=null){
 			Builder build = CsvSchema.builder();
 			for(String field : fieldNames.split(",")){

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.datadidit</groupId>
 	<artifactId>camel-sandbox</artifactId>
@@ -17,6 +18,12 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-core</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<!-- Camel Test Deps -->
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-test</artifactId>
 				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
@@ -51,6 +58,6 @@
 	</dependencies>
 	<modules>
 		<module>camel-csv-json</module>
-    <module>camel-geo-flow</module>
-  </modules>
+		<module>camel-geo-flow</module>
+	</modules>
 </project>

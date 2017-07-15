@@ -17,6 +17,13 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+		<!-- Camel Test Deps -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test</artifactId>
+			<version>${camel.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.datadidit</groupId>
 			<artifactId>camel-csv-json</artifactId>
