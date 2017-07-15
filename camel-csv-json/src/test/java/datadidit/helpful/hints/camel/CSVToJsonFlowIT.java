@@ -2,6 +2,7 @@ package datadidit.helpful.hints.camel;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -14,20 +15,29 @@ import org.junit.AfterClass;
 import org.junit.Test;
 
 public class CSVToJsonFlowIT extends CamelTestSupport{
-	@EndpointInject(uri = "file://src/test/resources/camel/data?delete=true")
+	private final String dataDir = "src/test/resources/camel/data";
+	
+	private final String outputDir = "src/test/resources/camel/data-output";
+
+	@EndpointInject(uri = "file://"+dataDir)
 	protected FileEndpoint beginFileEndpoint;
 	
-	@EndpointInject(uri = "file://src/test/resources/camel/data-output")
+	@EndpointInject(uri = "file://"+outputDir)
 	protected FileEndpoint endFileEndpoint;
 	
 	@EndpointInject(uri = "mock:result")
 	protected MockEndpoint resultEndpoint;
 	
 	@Test
-	public void testSimple() throws InterruptedException {
+	public void testSimple() throws InterruptedException, IOException {
 		resultEndpoint.expectedMinimumMessageCount(1);
 		
 		resultEndpoint.assertIsSatisfied();
+		
+		//See Data 
+		for(File file : new File(outputDir).listFiles()) {
+			System.out.println(FileUtils.readFileToString(file));
+		}
 	}
 	
 	@Override
@@ -59,11 +69,14 @@ public class CSVToJsonFlowIT extends CamelTestSupport{
 	@AfterClass
 	public static void cleanup() throws IOException {
 		File outputDir = new File("src/test/resources/camel/data-output");
+		File camelDir = new File("src/test/resources/camel/data/.camel");
 		
-		for(File file : outputDir.listFiles()) {
+		for(File file : camelDir.listFiles()) {
 			FileUtils.moveFileToDirectory(file, new File("src/test/resources/camel/data"), false);			
 		}
 		
+		//Finish clean up by deleting unnecessary directories
 		outputDir.delete();
+		camelDir.delete();
 	}
 }
