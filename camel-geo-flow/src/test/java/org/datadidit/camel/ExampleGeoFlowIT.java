@@ -7,8 +7,10 @@ import javax.naming.ConfigurationException;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -27,17 +29,8 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 	@EndpointInject(uri = "mock:result")
 	protected MockEndpoint resultEndpoint;
 	
-	private static CSVToJsonProcessor csvProcessor;
-	
-	@BeforeClass
-	public static void setupProcessors() {
-		try {
-			csvProcessor = new CSVToJsonProcessor(true, "");
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-			fail("Unable to run test failed to initialize processor "+e.getMessage());
-		}
-	}
+	@EndpointInject(uri = "direct:geoenhance")
+	protected DirectEndpoint directToGeoEndpoint;
 	
 	@Test
 	public void testFlow() throws InterruptedException, IOException {
@@ -56,9 +49,30 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 	protected RouteBuilder createRouteBuilder() {
 		return new RouteBuilder() {
 			public void configure() {
+				CSVToJsonProcessor processor = null;
+				try {
+					processor = new CSVToJsonProcessor(true, "");
+					
+					//Need to set default Endpoint
+					DefaultProducerTemplate template = new DefaultProducerTemplate(this.getContext(), directToGeoEndpoint);
+					template.start();
+					processor.setProducer(template);
+				} catch (Exception e) {
+					e.printStackTrace();
+					fail("Unable to create processor "+e.getMessage());
+				}
+				
+				/*
+				 * Turn CSV to JSON
+				 */
 				from(beginFileEndpoint)
-				.process(csvProcessor)
-				.log("Received Data ")
+				.process(processor)
+				.log("Received Data ");
+				
+				/*
+				 * Geo Enhance
+				 */
+				from(directToGeoEndpoint)
 				 .to(endFileEndpoint)
 				 .to(resultEndpoint);
 			}
