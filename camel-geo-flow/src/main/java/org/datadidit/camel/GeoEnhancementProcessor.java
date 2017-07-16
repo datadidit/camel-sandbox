@@ -66,7 +66,7 @@ public class GeoEnhancementProcessor implements Processor{
 		exchange.getIn().setBody(output);
 	}
 	
-	private Object stringToJson(InputStream stream) throws IOException{        
+	public Object stringToJson(InputStream stream) throws IOException{        
         Map<String,Object> map = new HashMap<>();
 		
         String input = IOUtils.toString(stream, Charset.defaultCharset());
@@ -80,7 +80,11 @@ public class GeoEnhancementProcessor implements Processor{
         	return mapper.readValue(input, convertList.getClass());
         }
         
-        return mapper.readValue(stream, map.getClass());
+        return mapper.readValue(input, map.getClass());
+	}
+	
+	public Map<String, Object> addGeo(Map<String, Object> json) throws GeoException{
+		return addGeo(json, this.fields, this.geoJsonKey);
 	}
 	
 	/**
@@ -91,7 +95,7 @@ public class GeoEnhancementProcessor implements Processor{
 	 * @return
 	 * @throws GeoException 
 	 */
-	public Map<String, Object> addGeo(Map<String,Object> json, String fields, String geokey) throws GeoException{
+	private Map<String, Object> addGeo(Map<String,Object> json, String fields, String geokey) throws GeoException{
 		String[] addressKeys = fields.split(",");
 		String address; 
 		StringBuilder build = new StringBuilder(); 
