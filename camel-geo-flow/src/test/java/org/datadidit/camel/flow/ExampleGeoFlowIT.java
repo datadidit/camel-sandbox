@@ -37,7 +37,7 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 		resultEndpoint.expectedMinimumMessageCount(1);
 		
 		File output = new File("src/test/resources/data-output");
-		
+
 		resultEndpoint.assertIsSatisfied();
 		for(File file : output.listFiles()) {
 			System.out.println(FileUtils.readFileToString(file));
@@ -49,14 +49,14 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 	protected RouteBuilder createRouteBuilder() {
 		return new RouteBuilder() {
 			public void configure() {
-				CSVToJsonProcessor processor = null;
+				CSVToJsonProcessor csvProcessor = null;
 				try {
-					processor = new CSVToJsonProcessor(true, "");
+					csvProcessor = new CSVToJsonProcessor(true, "");
 					
 					//Need to set default Endpoint
 					DefaultProducerTemplate template = new DefaultProducerTemplate(this.getContext(), directToGeoEndpoint);
 					template.start();
-					processor.setProducer(template);
+					csvProcessor.setProducer(template);
 				} catch (Exception e) {
 					e.printStackTrace();
 					fail("Unable to create processor "+e.getMessage());
@@ -66,7 +66,7 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 				 * Turn CSV to JSON
 				 */
 				from(beginFileEndpoint)
-				.process(processor)
+				.process(csvProcessor)
 				.log("Received Data ");
 				
 				/*
