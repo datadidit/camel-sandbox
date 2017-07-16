@@ -1,4 +1,4 @@
-package org.datadidit.camel;
+package org.datadidit.camel.flow;
 
 import java.io.File;
 import java.io.IOException;
