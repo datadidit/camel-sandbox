@@ -50,11 +50,13 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 	
 	@Test
 	public void testFlow() throws InterruptedException, IOException {
+		this.context().getShutdownStrategy().setTimeout(60);
 		csvResultEndpoint.expectedMinimumMessageCount(1);
 		geoResultEndpoint.expectedMessageCount(1);
 		
 		csvResultEndpoint.assertIsSatisfied();
 		geoResultEndpoint.assertIsSatisfied();
+		
 		
 		List<Exchange> exchanges = geoResultEndpoint.getExchanges();
 		
@@ -73,6 +75,10 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 				GeocodingResult[] geoArray = (GeocodingResult[]) entry.get("geometry");
 				assertTrue("Should be atleast 1 geo entry ", geoArray.length>=1);
 				
+				GeocodingResult[] resultAddress = (GeocodingResult[]) entry.get("geometry");
+
+				System.out.println(resultAddress[0].formattedAddress);
+				System.out.println(resultAddress[0].geometry.location);		
 				System.out.println(mapper.writeValueAsString(entry));
 			}
 		}
@@ -89,7 +95,7 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 					csvProcessor = new CSVToJsonProcessor(true, null);
 					
 					String geoKey = "geometry";
-					geoProcessor = new GeoEnrichmentProcessor(apiKey, "BirthPlace,State,Country", geoKey);
+					geoProcessor = new GeoEnrichmentProcessor(apiKey, "Birthplace,State,Country", geoKey);
 					
 					//Need to set default Endpoint
 					DefaultProducerTemplate template = new DefaultProducerTemplate(this.getContext(), directToGeoEndpoint);

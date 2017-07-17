@@ -1,5 +1,8 @@
 package org.datadidit.camel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -74,6 +77,28 @@ public class GeoEnrichmentIT {
 		} catch (ApiException | InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testGeoCity() {
+		String address1 = "Greenbelt MD US";
+		String address2 = "Annapolis MD US";
+		
+		try {
+			GeocodingResult[] resultAddress1 = GeocodingApi.geocode(context, address1).await();
+			GeocodingResult[] resultAddress2 = GeocodingApi.geocode(context, address2).await();
+			
+			assertEquals(1, resultAddress1.length);
+			assertEquals(1, resultAddress2.length);
+
+			System.out.println(resultAddress1[0].formattedAddress);
+			System.out.println(resultAddress1[0].geometry.location);
+			
+			System.out.println(resultAddress2[0].formattedAddress);
+			System.out.println(resultAddress2[0].geometry.location);
+		} catch (ApiException | InterruptedException | IOException e) {
+			fail("Error trying to geo code "+e.getMessage());
 		}
 	}
 	

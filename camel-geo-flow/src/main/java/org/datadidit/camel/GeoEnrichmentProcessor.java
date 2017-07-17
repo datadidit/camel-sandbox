@@ -114,7 +114,6 @@ public class GeoEnrichmentProcessor implements Processor{
 		
 		try {
 			if(cache.containsKey(address)) {
-				System.out.println("Hit cache "+address);
 				json.put(geokey, cache.get(address));
 			}else {
 				GeocodingResult[] results = GeocodingApi.geocode(context, address).await();

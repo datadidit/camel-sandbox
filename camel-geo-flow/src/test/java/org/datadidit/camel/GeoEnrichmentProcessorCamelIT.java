@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.maps.model.GeocodingResult;
 
 public class GeoEnrichmentProcessorCamelIT extends CamelTestSupport{
     @Produce(uri = "direct:start")
@@ -75,7 +76,14 @@ public class GeoEnrichmentProcessorCamelIT extends CamelTestSupport{
 		List<Exchange> exchanges = resultEndpoint.getExchanges();
 		
 		for(Exchange exchange : exchanges) {
-			System.out.println("Outgoing "+exchange.getIn().getBody());
+			List<Map<String,Object>> output = (List<Map<String, Object>>) exchange.getIn().getBody(); 
+		
+			for(Map<String, Object> entry : output) {
+				GeocodingResult[] resultAddress = (GeocodingResult[]) entry.get("geometry");
+
+				System.out.println(resultAddress[0].formattedAddress);
+				System.out.println(resultAddress[0].geometry.location);			
+			}
 		}
 	}
 	
