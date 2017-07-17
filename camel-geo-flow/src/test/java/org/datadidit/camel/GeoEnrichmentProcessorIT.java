@@ -3,14 +3,22 @@ package org.datadidit.camel;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.datadidit.camel.util.TestUtils;
 import org.junit.Test;
 
-import com.google.maps.model.GeocodingResult;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GeoEnrichmentProcessorIT {
+	private ObjectMapper mapper = new ObjectMapper(); 
+	
 	@Test
 	public void testAddGeo() {
 		String apiKey = System.getenv("apiKey");
@@ -58,16 +66,26 @@ public class GeoEnrichmentProcessorIT {
 
 
 			Map<String, Object> enhancedMap2 = processor.addGeo(geoInfo2);
-			GeocodingResult[] resultAddress1 = (GeocodingResult[]) enhancedMap1.get(geoKey);
-			GeocodingResult[] resultAddress2 = (GeocodingResult[]) enhancedMap2.get(geoKey);
+			List<Map<String,Object>> resultAddress1 = TestUtils.convertToGeo((List<String>) enhancedMap1.get(geoKey));
+			List<Map<String,Object>> resultAddress2 = TestUtils.convertToGeo((List<String>) enhancedMap2.get(geoKey));
 
-			System.out.println(resultAddress1[0].formattedAddress);
-			System.out.println(resultAddress1[0].geometry.location);
+			for(Map<String, Object> entry : resultAddress1) {
+				System.out.println(entry);
+			}
+			
+			//TODO: Add some asserts in here
+			//GeocodingResult[] resultAddress1 = enhancedMap1.get(geoKey);
+			//GeocodingResult[] resultAddress2 = enhancedMap2.get(geoKey);
 
-			System.out.println(resultAddress2[0].formattedAddress);
-			System.out.println(resultAddress2[0].geometry.location);
-		} catch (GeoException e) {
+			//System.out.println(resultAddress1[0].formattedAddress);
+			//System.out.println(resultAddress1[0].geometry.location);
+
+			//System.out.println(resultAddress2[0].formattedAddress);
+			//System.out.println(resultAddress2[0].geometry.location);
+		} catch (GeoException | IOException e) {
 			fail("Error trying to geo code "+e.getMessage());
 		}
 	}
+	
+
 }
