@@ -21,7 +21,7 @@ import com.google.maps.model.GeocodingResult;
 
 import datadidit.helpful.hints.camel.CSVToJsonProcessor;
 
-public class GeoEnhanceIT {
+public class GeoEnrichmentIT {
 	private static GeoApiContext context;
 
 	private static File file; 

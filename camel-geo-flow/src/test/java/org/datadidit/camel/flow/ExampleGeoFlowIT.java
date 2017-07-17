@@ -3,9 +3,7 @@ package org.datadidit.camel.flow;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
-
-import javax.naming.ConfigurationException;
+import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -20,6 +18,9 @@ import org.datadidit.camel.GeoEnrichmentProcessor;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.maps.model.GeocodingResult;
 
 import datadidit.helpful.hints.camel.CSVToJsonProcessor;
 
@@ -58,7 +59,22 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 		List<Exchange> exchanges = geoResultEndpoint.getExchanges();
 		
 		for(Exchange exchange : exchanges) {
-			System.out.println("Outgoing "+exchange.getIn().getBody());
+			/*
+			 * Analyze exchange
+			 */
+			ObjectMapper mapper = new ObjectMapper(); 
+			List<Map<String,Object>> input = (List<Map<String, Object>>) exchange.getIn().getBody(); 
+			
+			for(Map<String, Object> entry : input){
+				//Each should have a geomentry key
+				assertTrue(entry.containsKey("geometry"));
+				
+				//Each should have a geo entry
+				GeocodingResult[] geoArray = (GeocodingResult[]) entry.get("geometry");
+				assertTrue("Should be atleast 1 geo entry ", geoArray.length>=1);
+				
+				System.out.println(mapper.writeValueAsString(entry));
+			}
 		}
 	}
 	

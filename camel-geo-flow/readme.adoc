@@ -3,3 +3,5 @@
 Get apiKey from here https://console.developers.google.com/apis/credentials
 
 GitHub for Google Geo API: https://github.com/googlemaps/google-maps-services-java
+
+Google Geo Developer Guide: https://developers.google.com/maps/documentation/geocoding/intro
