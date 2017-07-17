@@ -104,7 +104,9 @@ public class GeoEnrichmentProcessor implements Processor{
 		 * Loop through fields 
 		 */
 		for(String addresskey : addressKeys) {
-			build.append(json.get(addresskey));
+			if(json.containsKey(addresskey))
+				build.append(json.get(addresskey));
+			
 			build.append(" ");
 		}
 		
