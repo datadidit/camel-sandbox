@@ -17,10 +17,10 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GeoEnhancementProcessorTest {
+public class GeoEnrichmentProcessorTest {
 	private static ObjectMapper mapper; 
 	
-	private GeoEnhancementProcessor processor;
+	private GeoEnrichmentProcessor processor;
 	
 	@BeforeClass 
 	public static void setup(){
@@ -29,7 +29,7 @@ public class GeoEnhancementProcessorTest {
 	
 	@Test
 	public void testStringToJsonMap() throws JsonProcessingException {
-		processor = new GeoEnhancementProcessor(null, null, "geometry");
+		processor = new GeoEnrichmentProcessor(null, null, "geometry");
 
 		Map<String, Object> test = new HashMap<>();
 		
@@ -51,7 +51,7 @@ public class GeoEnhancementProcessorTest {
 	
 	@Test
 	public void testStringToList() throws JsonProcessingException {
-		processor = new GeoEnhancementProcessor(null, null, "geometry");
+		processor = new GeoEnrichmentProcessor(null, null, "geometry");
 		List<Map<String,Object>> testList = new ArrayList<>();
 			
 		for(int i=0; i<10; i++) {

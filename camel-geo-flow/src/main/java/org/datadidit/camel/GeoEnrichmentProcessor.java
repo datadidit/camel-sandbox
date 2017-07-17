@@ -23,7 +23,7 @@ import com.google.maps.model.GeocodingResult;
  * GEO data
  *
  */
-public class GeoEnhancementProcessor implements Processor{
+public class GeoEnrichmentProcessor implements Processor{
 	private String apiKey; 
 	
 	private String fields; 
@@ -36,7 +36,7 @@ public class GeoEnhancementProcessor implements Processor{
 	
 	private static GeoApiContext context;
 
-	public GeoEnhancementProcessor(String apiKey, String fields, String geoJsonKey){
+	public GeoEnrichmentProcessor(String apiKey, String fields, String geoJsonKey){
 		setApiKey(apiKey);
 		setFields(fields);
 		this.setGeoJsonKey(geoJsonKey);

@@ -8,13 +8,13 @@ import java.util.Map;
 
 import org.junit.Test;
 
-public class GeoEnhancementProcessorIT {
+public class GeoEnrichmentProcessorIT {
 	@Test
 	public void testAddGeo() {
 		String apiKey = System.getenv("apiKey");
 		String geoKey = "geometry";
 		System.out.println("Api Key: "+apiKey);
-		GeoEnhancementProcessor processor = new GeoEnhancementProcessor(apiKey, "City,State,Country", geoKey);
+		GeoEnrichmentProcessor processor = new GeoEnrichmentProcessor(apiKey, "City,State,Country", geoKey);
 
 		Map<String, Object> geoInfo = new HashMap<>();
 		

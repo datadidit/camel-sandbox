@@ -17,7 +17,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GeoEnhancementProcessorCamelIT extends CamelTestSupport{
+public class GeoEnrichmentProcessorCamelIT extends CamelTestSupport{
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 	
@@ -87,7 +87,7 @@ public class GeoEnhancementProcessorCamelIT extends CamelTestSupport{
 		return new RouteBuilder() {
 			public void configure() {
 				String apiKey = System.getenv("apiKey");
-				GeoEnhancementProcessor processor = new GeoEnhancementProcessor(apiKey, "City,State,Country", "geometry");
+				GeoEnrichmentProcessor processor = new GeoEnrichmentProcessor(apiKey, "City,State,Country", "geometry");
 				
 				from("direct:start")
 				 .process(processor)
