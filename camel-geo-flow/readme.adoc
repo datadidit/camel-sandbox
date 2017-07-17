@@ -1,0 +1,5 @@
+= Camel Geo Enrichment Processor
+
+Get apiKey from here https://console.developers.google.com/apis/credentials
+
+GitHub for Google Geo API: https://github.com/googlemaps/google-maps-services-java
