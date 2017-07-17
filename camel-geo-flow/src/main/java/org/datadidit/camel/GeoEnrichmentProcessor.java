@@ -32,7 +32,7 @@ public class GeoEnrichmentProcessor implements Processor{
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	
-	private static Map<String, GeocodingResult[]> cache = new HashMap<>();
+	private static Map<String, Object> cache = new HashMap<>();
 	
 	private static GeoApiContext context;
 
@@ -117,8 +117,17 @@ public class GeoEnrichmentProcessor implements Processor{
 				json.put(geokey, cache.get(address));
 			}else {
 				GeocodingResult[] results = GeocodingApi.geocode(context, address).await();
-				cache.put(address, results);
-				json.put(geokey, results);	
+				
+				/*
+				 * Follow on processors like elastic search may only handle Native objects at ingest so convert 
+				 * georesult to String rep.
+				 */
+				List<String> geoStringRep = new ArrayList<>();
+				for(GeocodingResult result : results) {
+					geoStringRep.add(mapper.writeValueAsString(result));
+				}
+				cache.put(address, geoStringRep);
+				json.put(geokey, geoStringRep);	
 			}
 		} catch (ApiException | InterruptedException | IOException e) {
 			throw new GeoException("Issue accessing Coordinates ", e);
