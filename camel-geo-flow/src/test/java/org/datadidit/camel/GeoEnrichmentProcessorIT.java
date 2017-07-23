@@ -1,5 +1,6 @@
 package org.datadidit.camel;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -57,31 +58,24 @@ public class GeoEnrichmentProcessorIT {
 		
 		geoInfo2.put("State", "MD");
 		geoInfo2.put("City", "Hyattsville");
-		geoInfo.put("Country", "US");
+		geoInfo2.put("Country", "US");
 		
 		try {
-
+			ObjectMapper mapper = new ObjectMapper(); 
 
 			Map<String, Object> enhancedMap1 = processor.addGeo(geoInfo);
+			System.out.println("Test 1: "+enhancedMap1);
+			System.out.println(mapper.writeValueAsString(enhancedMap1));
 
+			//Map<String, Object> enhancedMap2 = processor.addGeo(geoInfo2);
+			//List<Map<String,Object>> resultAddress1 = TestUtils.convertToGeo(enhancedMap1.get(geoKey));
+			//List<Map<String,Object>> resultAddress2 = TestUtils.convertToGeo((List<String>) enhancedMap2.get(geoKey));
 
-			Map<String, Object> enhancedMap2 = processor.addGeo(geoInfo2);
-			List<Map<String,Object>> resultAddress1 = TestUtils.convertToGeo((List<String>) enhancedMap1.get(geoKey));
-			List<Map<String,Object>> resultAddress2 = TestUtils.convertToGeo((List<String>) enhancedMap2.get(geoKey));
-
-			for(Map<String, Object> entry : resultAddress1) {
-				System.out.println(entry);
-			}
+			//for(Map<String, Object> entry : resultAddress1) {
+			//	System.out.println(entry);
+			//}
 			
-			//TODO: Add some asserts in here
-			//GeocodingResult[] resultAddress1 = enhancedMap1.get(geoKey);
-			//GeocodingResult[] resultAddress2 = enhancedMap2.get(geoKey);
-
-			//System.out.println(resultAddress1[0].formattedAddress);
-			//System.out.println(resultAddress1[0].geometry.location);
-
-			//System.out.println(resultAddress2[0].formattedAddress);
-			//System.out.println(resultAddress2[0].geometry.location);
+			//assertEquals("Make sure these two results are not equal.", false, resultAddress1.equals(resultAddress2));
 		} catch (GeoException | IOException e) {
 			fail("Error trying to geo code "+e.getMessage());
 		}

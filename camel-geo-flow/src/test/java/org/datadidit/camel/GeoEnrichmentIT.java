@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,11 @@ import com.google.maps.model.GeocodingResult;
 
 import datadidit.helpful.hints.camel.CSVToJsonProcessor;
 
+/**
+ * Initial tests directly against the Googles GEO API
+ * and sample data. 
+ * 
+ */
 public class GeoEnrichmentIT {
 	private static GeoApiContext context;
 

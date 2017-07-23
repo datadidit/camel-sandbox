@@ -121,13 +121,39 @@ public class GeoEnrichmentProcessor implements Processor{
 				/*
 				 * Follow on processors like elastic search may only handle Native objects at ingest so convert 
 				 * georesult to String rep.
+				 * 
+				 * Note: String rep didn't work going to try Map<String, Object>
 				 */
-				List<String> geoStringRep = new ArrayList<>();
+				List<Map<String, Object>> objRep = new ArrayList<>();
 				for(GeocodingResult result : results) {
-					geoStringRep.add(mapper.writeValueAsString(result));
+					Map<String, Object> obj = new HashMap<>();
+					
+					obj.put("formattedAddress", result.formattedAddress);
+					obj.put("postcodeLocalities", result.postcodeLocalities);
+					obj.put("placeId", result.placeId);
+					
+					//Add Geo
+					Map<String, Object> bounds = new HashMap<>();
+					Map<String, Object> viewport = new HashMap<>();
+					
+					bounds.put("northeast", result.geometry.bounds.northeast);
+					bounds.put("southwest", result.geometry.bounds.southwest);
+					
+					viewport.put("northeast", result.geometry.viewport.northeast);
+					viewport.put("southwest", result.geometry.viewport.southwest);
+
+					obj.put("bounds", bounds);
+					obj.put("viewport", viewport);
+					obj.put("location", result.geometry.location);
+					obj.put("locationType", result.geometry.locationType);
+					
+					objRep.add(obj);
 				}
-				cache.put(address, geoStringRep);
-				json.put(geokey, geoStringRep);	
+				
+				//TODO: Make this work with the actual list in case there is more than 
+				//one but for now just have work with 1st result
+				cache.put(address, objRep.get(0));
+				json.put(geokey, objRep.get(0));	
 			}
 		} catch (ApiException | InterruptedException | IOException e) {
 			throw new GeoException("Issue accessing Coordinates ", e);

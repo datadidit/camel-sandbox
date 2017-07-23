@@ -15,6 +15,7 @@ import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.datadidit.camel.GeoEnrichmentProcessor;
+import org.datadidit.camel.util.TestUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,7 +58,6 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 		csvResultEndpoint.assertIsSatisfied();
 		geoResultEndpoint.assertIsSatisfied();
 		
-		
 		List<Exchange> exchanges = geoResultEndpoint.getExchanges();
 		
 		for(Exchange exchange : exchanges) {
@@ -67,19 +67,20 @@ public class ExampleGeoFlowIT extends CamelTestSupport{
 			ObjectMapper mapper = new ObjectMapper(); 
 			List<Map<String,Object>> input = (List<Map<String, Object>>) exchange.getIn().getBody(); 
 			
+			FileUtils.write(new File("src/test/resources/output.json"), mapper.writeValueAsString(input));
 			for(Map<String, Object> entry : input){
+				System.out.println("Name: "+entry.get("Name"));
 				//Each should have a geomentry key
 				assertTrue(entry.containsKey("geometry"));
 				
-				//Each should have a geo entry
-				GeocodingResult[] geoArray = (GeocodingResult[]) entry.get("geometry");
-				assertTrue("Should be atleast 1 geo entry ", geoArray.length>=1);
+				//List<Map<String, Object>> geoArray = (List<Map<String, Object>>) entry.get("geometry");
+				//assertTrue("Should be atleast 1 geo entry ", geoArray.size()>=1);
 				
-				GeocodingResult[] resultAddress = (GeocodingResult[]) entry.get("geometry");
+				//Map<String, Object> geo = geoArray.get(0);
 
-				System.out.println(resultAddress[0].formattedAddress);
-				System.out.println(resultAddress[0].geometry.location);		
-				System.out.println(mapper.writeValueAsString(entry));
+				//for(Map.Entry<String, Object> geoEntry : geo.entrySet()) {
+				//	System.out.println("Key: "+geoEntry.getKey()+" Value: "+geoEntry.getValue());
+				//}
 			}
 		}
 	}

@@ -33,7 +33,7 @@ public class GoogleMapsServiceIT {
 
 			// See if Jackson can Output
 			ObjectMapper mapper = new ObjectMapper();
-			System.out.println(mapper.writeValueAsString(results[0].geometry));
+			System.out.println(mapper.writeValueAsString(results));
 		} catch (ApiException | InterruptedException | IOException e) {
 			e.printStackTrace();
 		}

@@ -1,5 +1,6 @@
 package org.datadidit.camel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,12 +13,17 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.datadidit.camel.util.TestUtils;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.GeocodingResult;
 
+/**
+ * Camel Tests for GeoEnrichment Processor
+ *
+ */
 public class GeoEnrichmentProcessorCamelIT extends CamelTestSupport{
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
@@ -52,7 +58,7 @@ public class GeoEnrichmentProcessorCamelIT extends CamelTestSupport{
 	}
 	
 	@Test
-	public void testProcessorIncomingJsonList() throws JsonProcessingException, InterruptedException {
+	public void testProcessorIncomingJsonList() throws InterruptedException, IOException {
 		String[] mdLocations = new String[] {"Forestville", "Largo", "Poolesville", "Annapolis"};
 		List<Map<String, Object>> incomingData = new ArrayList<>();
 		
@@ -79,10 +85,11 @@ public class GeoEnrichmentProcessorCamelIT extends CamelTestSupport{
 			List<Map<String,Object>> output = (List<Map<String, Object>>) exchange.getIn().getBody(); 
 		
 			for(Map<String, Object> entry : output) {
-				GeocodingResult[] resultAddress = (GeocodingResult[]) entry.get("geometry");
-
-				System.out.println(resultAddress[0].formattedAddress);
-				System.out.println(resultAddress[0].geometry.location);			
+				//List<Map<String,Object>> resultAddress = TestUtils.convertToGeo((List<String>)entry.get("geometry"));
+								
+				for(Map.Entry<String, Object> geoEntry : entry.entrySet()) {
+					System.out.println("Key: "+geoEntry.getKey()+" Value: "+geoEntry.getValue());
+				}
 			}
 		}
 	}
