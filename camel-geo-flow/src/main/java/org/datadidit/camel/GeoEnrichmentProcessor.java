@@ -18,6 +18,7 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
 
 /**
  * Take in JSON and enhance the JSON w/ 
@@ -137,15 +138,15 @@ public class GeoEnrichmentProcessor implements Processor{
 					Map<String, Object> bounds = new HashMap<>();
 					Map<String, Object> viewport = new HashMap<>();
 					
-					bounds.put("northeast", result.geometry.bounds.northeast);
-					bounds.put("southwest", result.geometry.bounds.southwest);
+					bounds.put("northeast", result.geometry.bounds.northeast.toString());
+					bounds.put("southwest", result.geometry.bounds.southwest.toString());
 					
-					viewport.put("northeast", result.geometry.viewport.northeast);
-					viewport.put("southwest", result.geometry.viewport.southwest);
+					viewport.put("northeast", result.geometry.viewport.northeast.toString());
+					viewport.put("southwest", result.geometry.viewport.southwest.toString());
 
 					obj.put("bounds", bounds);
 					obj.put("viewport", viewport);
-					obj.put("location", result.geometry.location);
+					obj.put("location", result.geometry.location.toString());
 					obj.put("locationType", result.geometry.locationType);
 					
 					//Add Address Component
@@ -178,6 +179,25 @@ public class GeoEnrichmentProcessor implements Processor{
 		return json;
 	}
 
+	/**
+	 * Follow on systems may be looking for lat, lon as keys instead of 
+	 * lat, lng. Just normalize to standard (latitude, longitude)
+	 * 
+	 * @param coordinates
+	 * @return
+	 */
+	private String normalizeLatLng(LatLng coordinates) {
+		StringBuilder build = new StringBuilder();
+		
+		build.append("(");
+		build.append(coordinates.lat);
+		build.append(",");
+		build.append(coordinates.lng);
+		build.append(")");
+		
+		return build.toString();
+	}
+	
 	public String getApiKey() {
 		return apiKey;
 	}
