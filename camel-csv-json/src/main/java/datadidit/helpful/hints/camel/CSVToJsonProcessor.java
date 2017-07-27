@@ -95,7 +95,7 @@ public class CSVToJsonProcessor implements Processor{
 				jsonList.add(map);
 				if(i%linesPerJsonOutput==0) {
 					//Output exchange limit was hit
-					this.outputExchange(jsonList);
+					this.outputExchange(jsonList, arg0.getIn().getHeaders());
 					
 					//Reinitialize list
 					jsonList = new ArrayList<>();
@@ -103,21 +103,22 @@ public class CSVToJsonProcessor implements Processor{
 			}
 			if(!jsonList.isEmpty()) {
 				//Output any left over files
-				this.outputExchange(jsonList);
+				this.outputExchange(jsonList, arg0.getIn().getHeaders());
 			}
 		}else {
 			//Output the full file as a JSON object
-			this.outputExchange(objects);
+			this.outputExchange(objects, arg0.getIn().getHeaders());
 		}
 		
 		//TODO:If you don't close the stream this processor will continue to try and process the exchange...
 		stream.close();
 	}
 	
-	private void outputExchange(List<Map<?,?>> map) throws IOException {
+	private void outputExchange(List<Map<?,?>> map, Map<String, Object> headers) throws IOException {
 		final String json = writeAsJson(map);
 		producer.send(new Processor(){
 			public void process(Exchange outExchange){
+				outExchange.getIn().setHeaders(headers);
 				outExchange.getIn().setBody(json);
 			}
 		});

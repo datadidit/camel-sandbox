@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.errors.ApiException;
+import com.google.maps.model.AddressComponent;
 import com.google.maps.model.GeocodingResult;
 
 /**
@@ -147,6 +148,21 @@ public class GeoEnrichmentProcessor implements Processor{
 					obj.put("location", result.geometry.location);
 					obj.put("locationType", result.geometry.locationType);
 					
+					//Add Address Component
+					List<Map<String, Object>> addressComponents = new ArrayList<>();
+					for(AddressComponent comp : result.addressComponents) {
+						Map<String,Object> addressComp = new HashMap<>();
+						addressComp.put("long_name", comp.longName);
+						addressComp.put("short_name", comp.shortName);
+						String[] types = new String[comp.types.length];
+						for(int i=0; i<comp.types.length; i++) {
+							types[i] = comp.types[i].toString();
+						}
+						addressComp.put("types", types);
+						addressComponents.add(addressComp);
+					}
+					
+					obj.put("addressComponents", addressComponents);
 					objRep.add(obj);
 				}
 				
