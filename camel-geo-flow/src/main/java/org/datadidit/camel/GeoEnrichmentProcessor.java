@@ -13,6 +13,7 @@ import javax.naming.ConfigurationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.GeoApiContext;
@@ -28,6 +29,8 @@ import com.google.maps.model.LatLng;
  *
  */
 public class GeoEnrichmentProcessor implements Processor{
+	private Logger logger = Logger.getLogger(GeoEnrichmentProcessor.class);
+	
 	private String apiKey; 
 	
 	private String fields; 
@@ -63,7 +66,11 @@ public class GeoEnrichmentProcessor implements Processor{
 			List<Map<String,Object>> incomingData = (List<Map<String, Object>>) jsonDS;
 			
 			for(Map<String, Object> entry : incomingData){
-				output.add(this.addGeo(entry, fields, this.geoJsonKey));
+				try {
+					output.add(this.addGeo(entry, fields, this.geoJsonKey));
+				}catch(Exception ex) {
+					logger.error("Issue getting geo for entry: "+entry);
+				}
 			}
 		}else{
 			Map<String, Object> temp = (Map<String, Object>) jsonDS;
@@ -143,14 +150,18 @@ public class GeoEnrichmentProcessor implements Processor{
 					Map<String, Object> bounds = new HashMap<>();
 					Map<String, Object> viewport = new HashMap<>();
 					
-					bounds.put("northeast", result.geometry.bounds.northeast.toString());
-					bounds.put("southwest", result.geometry.bounds.southwest.toString());
+					if(result.geometry.bounds!=null) {
+						bounds.put("northeast", result.geometry.bounds.northeast.toString());
+						bounds.put("southwest", result.geometry.bounds.southwest.toString());
+						obj.put("bounds", bounds);						
+					}
 					
-					viewport.put("northeast", result.geometry.viewport.northeast.toString());
-					viewport.put("southwest", result.geometry.viewport.southwest.toString());
-
-					obj.put("bounds", bounds);
-					obj.put("viewport", viewport);
+					if(result.geometry.viewport!=null) {
+						viewport.put("northeast", result.geometry.viewport.northeast.toString());
+						viewport.put("southwest", result.geometry.viewport.southwest.toString());
+						obj.put("viewport", viewport);
+					}
+					
 					obj.put("location", result.geometry.location.toString());
 					obj.put("locationType", result.geometry.locationType);
 					
