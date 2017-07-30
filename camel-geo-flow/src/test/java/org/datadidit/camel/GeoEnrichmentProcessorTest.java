@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.ConfigurationException;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,7 +29,7 @@ public class GeoEnrichmentProcessorTest {
 	}
 	
 	@Test
-	public void testStringToJsonMap() throws JsonProcessingException {
+	public void testStringToJsonMap() throws JsonProcessingException, ConfigurationException {
 		processor = new GeoEnrichmentProcessor(null, null, "geometry");
 
 		Map<String, Object> test = new HashMap<>();
@@ -49,7 +51,7 @@ public class GeoEnrichmentProcessorTest {
 	}
 	
 	@Test
-	public void testStringToList() throws JsonProcessingException {
+	public void testStringToList() throws JsonProcessingException, ConfigurationException {
 		processor = new GeoEnrichmentProcessor(null, null, "geometry");
 		List<Map<String,Object>> testList = new ArrayList<>();
 			

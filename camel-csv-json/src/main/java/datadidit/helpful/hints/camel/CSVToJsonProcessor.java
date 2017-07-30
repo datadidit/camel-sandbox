@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.naming.ConfigurationException;
@@ -46,6 +47,12 @@ public class CSVToJsonProcessor implements Processor{
 	private Integer linesPerJsonOutput;
 	
 	public CSVToJsonProcessor(Boolean header, String fieldNames) throws ConfigurationException{
+		this(header, fieldNames, null);
+	}
+	
+	public CSVToJsonProcessor(Boolean header, String fieldNames, Integer linesPerJsonOutput) throws ConfigurationException {
+		this.linesPerJsonOutput = linesPerJsonOutput;
+		
 		if(!header && fieldNames!=null){
 			Builder build = CsvSchema.builder();
 			for(String field : fieldNames.split(",")){
@@ -93,6 +100,7 @@ public class CSVToJsonProcessor implements Processor{
 			int i=0;
 			for(Map<?, ?> map : objects) {
 				jsonList.add(map);
+				i++;
 				if(i%linesPerJsonOutput==0) {
 					//Output exchange limit was hit
 					this.outputExchange(jsonList, arg0.getIn().getHeaders());

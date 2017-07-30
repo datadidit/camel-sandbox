@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.ConfigurationException;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -100,7 +102,7 @@ public class GeoEnrichmentProcessorCamelIT extends CamelTestSupport{
 	@Override
 	protected RouteBuilder createRouteBuilder() {
 		return new RouteBuilder() {
-			public void configure() {
+			public void configure() throws ConfigurationException {
 				String apiKey = System.getenv("apiKey");
 				GeoEnrichmentProcessor processor = new GeoEnrichmentProcessor(apiKey, "City,State,Country", "geometry");
 				

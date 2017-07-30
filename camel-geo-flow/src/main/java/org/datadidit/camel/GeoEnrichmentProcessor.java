@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.ConfigurationException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.io.IOUtils;
@@ -30,7 +32,7 @@ public class GeoEnrichmentProcessor implements Processor{
 	
 	private String fields; 
 	
-	private String geoJsonKey;
+	private String geoJsonKey = "geometry";
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	
@@ -38,7 +40,10 @@ public class GeoEnrichmentProcessor implements Processor{
 	
 	private static GeoApiContext context;
 
-	public GeoEnrichmentProcessor(String apiKey, String fields, String geoJsonKey){
+	public GeoEnrichmentProcessor(String apiKey, String fields, String geoJsonKey) throws ConfigurationException{
+		if(apiKey==null || fields==null)
+			throw new ConfigurationException("Unable to configure processor apiKey and fields must be set. Fields: "+fields+" API Key: "+apiKey);
+		
 		setApiKey(apiKey);
 		setFields(fields);
 		this.setGeoJsonKey(geoJsonKey);

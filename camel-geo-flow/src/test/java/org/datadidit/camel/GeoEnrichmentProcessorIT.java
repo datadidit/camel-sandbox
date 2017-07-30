@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.ConfigurationException;
+
 import org.datadidit.camel.util.TestUtils;
 import org.junit.Test;
 
@@ -21,7 +23,7 @@ public class GeoEnrichmentProcessorIT {
 	private ObjectMapper mapper = new ObjectMapper(); 
 	
 	@Test
-	public void testAddGeo() {
+	public void testAddGeo() throws ConfigurationException {
 		String apiKey = System.getenv("apiKey");
 		String geoKey = "geometry";
 		System.out.println("Api Key: " + apiKey);
@@ -45,7 +47,7 @@ public class GeoEnrichmentProcessorIT {
 	}
 
 	@Test
-	public void testAddGeoCity() {
+	public void testAddGeoCity() throws ConfigurationException {
 		String apiKey = System.getenv("apiKey");
 		String geoKey = "geometry";
 		GeoEnrichmentProcessor processor = new GeoEnrichmentProcessor(apiKey, "City,State,Country", geoKey);
