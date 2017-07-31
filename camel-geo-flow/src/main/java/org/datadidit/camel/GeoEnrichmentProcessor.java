@@ -39,7 +39,7 @@ public class GeoEnrichmentProcessor implements Processor{
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	
-	private static Map<String, Object> cache = new HashMap<>();
+	private Map<String, Object> cache = new HashMap<>();
 	
 	private static GeoApiContext context;
 
@@ -128,6 +128,7 @@ public class GeoEnrichmentProcessor implements Processor{
 		
 		try {
 			if(cache.containsKey(address)) {
+				logger.debug("Hit cache "+address);
 				json.put(geokey, cache.get(address));
 			}else {
 				GeocodingResult[] results = GeocodingApi.geocode(context, address).await();
@@ -185,6 +186,7 @@ public class GeoEnrichmentProcessor implements Processor{
 				
 				//TODO: Make this work with the actual list in case there is more than 
 				//one but for now just have work with 1st result
+				logger.debug("Updating cache "+address);
 				cache.put(address, objRep.get(0));
 				json.put(geokey, objRep.get(0));	
 			}
@@ -236,6 +238,14 @@ public class GeoEnrichmentProcessor implements Processor{
 
 	public void setGeoJsonKey(String geoJsonKey) {
 		this.geoJsonKey = geoJsonKey;
+	}
+	
+	public void setCache(Map<String, Object> cache) {
+		this.cache = cache;
+	}
+	
+	public Map<String, Object> getCache(){
+		return cache;
 	}
 
 }
