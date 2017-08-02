@@ -13,11 +13,12 @@ import javax.naming.ConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+@Ignore
 public class GeoEnrichmentProcessorTest {
 	private static ObjectMapper mapper; 
 	
